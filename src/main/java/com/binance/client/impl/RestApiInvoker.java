@@ -76,4 +76,13 @@ abstract class RestApiInvoker {
         return client.newWebSocket(request, listener);
     }
 
+    /** Shut down the OkHttp threadpool used by this class (useful to call at the end of a main() program
+     *  that you don't want to keep running for a long time).
+     *  (see https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/#shutdown-isnt-necessary)
+     */
+    static void shutDown() {
+        client.dispatcher().executorService().shutdown();
+        client.connectionPool().evictAll();
+    }
+
 }

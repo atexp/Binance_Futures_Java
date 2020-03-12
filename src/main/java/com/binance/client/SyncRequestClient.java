@@ -68,6 +68,15 @@ public interface SyncRequestClient {
         return BinanceApiInternalFactory.getInstance().createSyncRequestClient(apiKey, secretKey, options);
     }
 
+    /**
+     * Shut down the OkHttp resources used by *all* clients (useful to call at the end of a main() program
+     * that you don't want to keep running for a long time).
+     * No future clients will work after this anymore either.
+     */
+    static void shutDown() {
+        BinanceApiInternalFactory.getInstance().shutDown();
+    }
+
 
     /**
      * Fetch current exchange trading rules and symbol information.

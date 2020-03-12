@@ -37,4 +37,7 @@ public final class BinanceApiInternalFactory {
         return webSocketStreamClient;
     }
 
+    public void shutDown() {
+        RestApiInvoker.shutDown();
+    }
 }
