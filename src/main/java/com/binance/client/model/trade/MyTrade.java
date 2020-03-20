@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 
 public class MyTrade {
 
+    private Long id;
+
     private Boolean isBuyer;
 
     private BigDecimal commission;
@@ -32,6 +34,14 @@ public class MyTrade {
     private String symbol;
 
     private Long time;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Boolean getIsBuyer() {
         return isBuyer;
@@ -139,7 +149,8 @@ public class MyTrade {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, BinanceApiConstants.TO_STRING_BUILDER_STYLE).append("isBuyer", isBuyer)
+        return new ToStringBuilder(this, BinanceApiConstants.TO_STRING_BUILDER_STYLE)
+                .append("id", id).append("isBuyer", isBuyer)
                 .append("commission", commission).append("commissionAsset", commissionAsset)
                 .append("counterPartyId", counterPartyId).append("isMaker", isMaker)
                 .append("orderId", orderId).append("price", price).append("qty", qty).append("quoteQty", quoteQty)

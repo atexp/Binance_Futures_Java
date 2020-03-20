@@ -892,7 +892,7 @@ class RestApiRequestImpl {
                 element.setCommission(item.getBigDecimal("commission"));
                 element.setCommissionAsset(item.getString("commissionAsset"));
                 element.setCounterPartyId(item.getLongOrDefault("counterPartyId", 0));
-                element.setOrderId(item.getLong("orderId"));
+                element.setId(item.getLong("id"));
                 element.setIsMaker(item.getBoolean("maker"));
                 element.setOrderId(item.getLong("orderId"));
                 element.setPrice(item.getBigDecimal("price"));
