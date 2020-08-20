@@ -1,25 +1,11 @@
 package com.binance.client;
 
+import com.alibaba.fastjson.JSONObject;
 import com.binance.client.impl.BinanceApiInternalFactory;
-import com.binance.client.model.market.AggregateTrade;
-import com.binance.client.model.market.Candlestick;
-import com.binance.client.model.market.ExchangeInformation;
-import com.binance.client.model.market.FundingRate;
-import com.binance.client.model.market.LiquidationOrder;
-import com.binance.client.model.market.MarkPrice;
-import com.binance.client.model.market.OrderBook;
-import com.binance.client.model.market.PriceChangeTicker;
-import com.binance.client.model.market.SymbolOrderBook;
-import com.binance.client.model.market.SymbolPrice;
-import com.binance.client.model.market.Trade;
+import com.binance.client.model.ResponseResult;
+import com.binance.client.model.market.*;
 import com.binance.client.model.enums.*;
-import com.binance.client.model.trade.AccountBalance;
-import com.binance.client.model.trade.AccountInformation;
-import com.binance.client.model.trade.Income;
-import com.binance.client.model.trade.Leverage;
-import com.binance.client.model.trade.MyTrade;
-import com.binance.client.model.trade.Order;
-import com.binance.client.model.trade.PositionRisk;
+import com.binance.client.model.trade.*;
 
 import java.util.List;
 
@@ -161,15 +147,22 @@ public interface SyncRequestClient {
      * @return All liquidation orders.
      */
     List<LiquidationOrder> getLiquidationOrders(String symbol, Long startTime, Long endTime, Integer limit);
+
+    /**
+     * Place new orders
+     * @param batchOrders
+     * @return
+     */
+    List<Object> postBatchOrders(String batchOrders);
     
     /**
      * Send in a new order.
      *
      * @return Order.
      */
-    Order postOrder(String symbol, OrderSide side, OrderType orderType,
+    Order postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
             TimeInForce timeInForce, String quantity, String price, String reduceOnly,
-            String newClientOrderId, String stopPrice, WorkingType workingType);
+            String newClientOrderId, String stopPrice, WorkingType workingType, NewOrderRespType newOrderRespType);
 
     /**
      * Cancel an active order.
@@ -177,6 +170,63 @@ public interface SyncRequestClient {
      * @return Order.
      */
     Order cancelOrder(String symbol, Long orderId, String origClientOrderId);
+
+    /**
+     * Cancel all open orders.
+     *
+     * @return ResponseResult.
+     */
+    ResponseResult cancelAllOpenOrder(String symbol);
+
+    /**
+     * Batch cancel orders.
+     *
+     * @return Order.
+     */
+    List<Object> batchCancelOrders(String symbol, String orderIdList, String origClientOrderIdList);
+
+    /**
+     * Switch position side. (true == dual, false == both)
+     *
+     * @return ResponseResult.
+     */
+    ResponseResult changePositionSide(boolean dual);
+
+    /**
+     * Change margin type (ISOLATED, CROSSED)
+     * @param symbolName
+     * @param marginType
+     * @return
+     */
+    ResponseResult changeMarginType(String symbolName, String marginType);
+
+    /**
+     * add isolated position margin
+     * @param symbolName
+     * @param type
+     * @param amount
+     * @param positionSide SHORT, LONG, BOTH
+     * @return
+     */
+    JSONObject addIsolatedPositionMargin(String symbolName, int type, String amount, PositionSide positionSide);
+
+    /**
+     *  get position margin history
+     * @param symbolName
+     * @param type
+     * @param startTime
+     * @param endTime
+     * @param limit
+     * @return
+     */
+    List<WalletDeltaLog> getPositionMarginHistory(String symbolName, int type, long startTime, long endTime, int limit);
+
+    /**
+     * Get if changed to HEDGE mode. (true == hedge mode, false == one-way mode)
+     *
+     * @return ResponseResult.
+     */
+    JSONObject getPositionSide();
 
     /**
      * Check an order's status.
@@ -261,5 +311,40 @@ public interface SyncRequestClient {
      * @return null.
      */
     String closeUserDataStream(String listenKey);
+
+    /**
+     * Open Interest Stat (MARKET DATA)
+     *
+     * @return Open Interest Stat.
+     */
+    List<OpenInterestStat> getOpenInterestStat(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit);
+
+    /**
+     * Top Trader Long/Short Ratio (Accounts) (MARKET DATA)
+     *
+     * @return Top Trader Long/Short Ratio (Accounts).
+     */
+    List<CommonLongShortRatio> getTopTraderAccountRatio(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit);
+
+    /**
+     * Top Trader Long/Short Ratio (Positions) (MARKET DATA)
+     *
+     * @return Top Trader Long/Short Ratio (Positions).
+     */
+    List<CommonLongShortRatio> getTopTraderPositionRatio(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit);
+
+    /**
+     * Long/Short Ratio (MARKET DATA)
+     *
+     * @return global Long/Short Ratio. 
+     */
+    List<CommonLongShortRatio> getGlobalAccountRatio(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit);
+
+    /**
+     * Taker Long/Short Ratio (MARKET DATA)
+     *
+     * @return Taker Long/Short Ratio. 
+     */
+    List<TakerLongShortStat> getTakerLongShortRatio(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit);
 
 }

@@ -1,25 +1,11 @@
 package com.binance.client.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.binance.client.SyncRequestClient;
-import com.binance.client.model.market.AggregateTrade;
-import com.binance.client.model.market.Candlestick;
-import com.binance.client.model.market.ExchangeInformation;
-import com.binance.client.model.market.FundingRate;
-import com.binance.client.model.market.LiquidationOrder;
-import com.binance.client.model.market.MarkPrice;
-import com.binance.client.model.market.OrderBook;
-import com.binance.client.model.market.PriceChangeTicker;
-import com.binance.client.model.market.SymbolOrderBook;
-import com.binance.client.model.market.SymbolPrice;
-import com.binance.client.model.market.Trade;
+import com.binance.client.model.ResponseResult;
+import com.binance.client.model.market.*;
 import com.binance.client.model.enums.*;
-import com.binance.client.model.trade.AccountBalance;
-import com.binance.client.model.trade.AccountInformation;
-import com.binance.client.model.trade.Income;
-import com.binance.client.model.trade.Leverage;
-import com.binance.client.model.trade.MyTrade;
-import com.binance.client.model.trade.Order;
-import com.binance.client.model.trade.PositionRisk;
+import com.binance.client.model.trade.*;
 
 import java.util.List;
 
@@ -93,21 +79,62 @@ public class SyncRequestImpl implements SyncRequestClient {
     public List<LiquidationOrder> getLiquidationOrders(String symbol, Long startTime, Long endTime, Integer limit) {
         return RestApiInvoker.callSync(requestImpl.getLiquidationOrders(symbol, startTime, endTime, limit));
     }
+
+    @Override
+    public List<Object> postBatchOrders(String batchOrders) {
+        return RestApiInvoker.callSync(requestImpl.postBatchOrders(batchOrders));
+    }
     
     @Override
-    public Order postOrder(String symbol, OrderSide side, OrderType orderType,
+    public Order postOrder(String symbol, OrderSide side, PositionSide positionSide, OrderType orderType,
             TimeInForce timeInForce, String quantity, String price, String reduceOnly,
-            String newClientOrderId, String stopPrice, WorkingType workingType) {
-        return RestApiInvoker.callSync(requestImpl.postOrder(symbol, side, orderType, 
+            String newClientOrderId, String stopPrice, WorkingType workingType, NewOrderRespType newOrderRespType) {
+        return RestApiInvoker.callSync(requestImpl.postOrder(symbol, side, positionSide, orderType,
                 timeInForce, quantity, price, reduceOnly, 
-                newClientOrderId, stopPrice, workingType));
+                newClientOrderId, stopPrice, workingType,newOrderRespType));
     }
     
     @Override
     public Order cancelOrder(String symbol, Long orderId, String origClientOrderId) {
         return RestApiInvoker.callSync(requestImpl.cancelOrder(symbol, orderId, origClientOrderId));
     }
-    
+
+    @Override
+    public ResponseResult cancelAllOpenOrder(String symbol) {
+      return RestApiInvoker.callSync(requestImpl.cancelAllOpenOrder(symbol));
+    }
+
+    @Override
+    public List<Object> batchCancelOrders(String symbol, String orderIdList, String origClientOrderIdList) {
+        return RestApiInvoker.callSync(requestImpl.batchCancelOrders(symbol, orderIdList, origClientOrderIdList));
+    }
+
+    @Override
+    public ResponseResult changePositionSide(boolean dual) {
+        return RestApiInvoker.callSync(requestImpl.changePositionSide(dual));
+    }
+
+    @Override
+    public ResponseResult changeMarginType(String symbolName, String marginType) {
+        return RestApiInvoker.callSync(requestImpl.changeMarginType(symbolName, marginType));
+    }
+
+    @Override
+    public JSONObject addIsolatedPositionMargin(String symbolName, int type, String amount, PositionSide positionSide) {
+        return RestApiInvoker.callSync(requestImpl.addPositionMargin(symbolName, type, amount, positionSide));
+    }
+
+    @Override
+    public List<WalletDeltaLog> getPositionMarginHistory(String symbolName, int type, long startTime, long endTime, int limit) {
+        return RestApiInvoker.callSync(requestImpl.getPositionMarginHistory(symbolName, type, startTime, endTime, limit));
+    }
+
+
+    @Override
+    public JSONObject getPositionSide() {
+        return RestApiInvoker.callSync(requestImpl.getPositionSide());
+    }
+
     @Override
     public Order getOrder(String symbol, Long orderId, String origClientOrderId) {
         return RestApiInvoker.callSync(requestImpl.getOrder(symbol, orderId, origClientOrderId));
@@ -168,4 +195,28 @@ public class SyncRequestImpl implements SyncRequestClient {
         return RestApiInvoker.callSync(requestImpl.closeUserDataStream(listenKey));
     }
 
+    @Override
+    public List<OpenInterestStat> getOpenInterestStat(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getOpenInterestStat(symbol, period, startTime, endTime, limit));
+    }
+
+    @Override
+    public List<CommonLongShortRatio> getTopTraderAccountRatio(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getTopTraderAccountRatio(symbol, period, startTime, endTime, limit));
+    }
+
+    @Override
+    public List<CommonLongShortRatio> getTopTraderPositionRatio(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getTopTraderPositionRatio(symbol, period, startTime, endTime, limit));
+    }
+
+    @Override
+    public List<CommonLongShortRatio> getGlobalAccountRatio(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getGlobalAccountRatio(symbol, period, startTime, endTime, limit));
+    }
+
+    @Override
+    public List<TakerLongShortStat> getTakerLongShortRatio(String symbol, PeriodType period, Long startTime, Long endTime, Integer limit) {
+        return RestApiInvoker.callSync(requestImpl.getTakerLongShortRatio(symbol, period, startTime, endTime, limit));
+    }
 }
